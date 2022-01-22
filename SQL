@@ -13,6 +13,16 @@ having transaction_date in (select min(transaction_date)
                             group by id_client )
 Order by id_client;   
 
+-- дата и время последней транзакции для каждого пользователя
+CREATE VIEW time_of_last_transaction AS
+Select id_client,transaction_date, max(transaction_time ) as last_time
+from transactions 
+group by id_client,transaction_date
+having transaction_date in (select max(transaction_date) 
+                            from transactions 
+                            group by id_client )
+Order by id_client;  
+
 --Другие агрегатные функции
 CREATE VIEW other_aggregate_functions AS
 Select id_client, count(id_transaction)as count,sum(transaction_sum) as sum, 

@@ -1,0 +1,14 @@
+--Написать текст SQL-запроса, выводящего количество транзакций, 
+--сумму транзакций, среднюю сумму транзакции и дату и время первой 
+--транзакции для каждого клиента, сумму последней произведенной 
+--транзакции.
+
+--дата и время первой транзакции для каждого пользователя
+CREATE VIEW time_of_first_transaction AS
+Select id_client,transaction_date, min(transaction_time ) as time
+from transactions 
+group by id_client,transaction_date
+having transaction_date in (select min(transaction_date) 
+                            from transactions 
+                            group by id_client )
+Order by id_client;   

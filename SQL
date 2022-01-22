@@ -23,9 +23,27 @@ having transaction_date in (select max(transaction_date)
                             group by id_client )
 Order by id_client;  
 
+--сумма последней транзакции каждого клиента 
+CREATE VIEW sum_of_last_transaction AS
+Select t.id_client as id_client, t.transaction_sum as transaction_sum
+From transactions t join time_of_last_transaction l
+on t.id_client=l.id_client
+Where t.transaction_date=l.transaction_date and t.transaction_time=l.last_time;
+
 --Другие агрегатные функции
 CREATE VIEW other_aggregate_functions AS
 Select id_client, count(id_transaction)as count,sum(transaction_sum) as sum, 
 avg(transaction_sum)as avg
 From transactions
 Group by id_client;
+
+--Итоговый запрос
+SELECT o.id_client AS id_client, o.count AS count, o.sum AS sum,
+o.avg AS avg, f.transaction_date as date_of_firs_transactions,
+f.time AS time_of_first_transactions, 
+s.transaction_sum as sum_of_last_transaction
+FROM other_aggregate_functions o JOIN time_of_first_transaction f
+ON o.id_client=f.id_client JOIN time_of_last_transaction l 
+ON o.id_client=l.id_client JOIN sum_of_last_transaction s
+ON o.id_client=s.id_client;
+

@@ -12,3 +12,10 @@ having transaction_date in (select min(transaction_date)
                             from transactions 
                             group by id_client )
 Order by id_client;   
+
+--Другие агрегатные функции
+CREATE VIEW other_aggregate_functions AS
+Select id_client, count(id_transaction)as count,sum(transaction_sum) as sum, 
+avg(transaction_sum)as avg
+From transactions
+Group by id_client;
